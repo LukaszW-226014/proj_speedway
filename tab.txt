@@ -1,0 +1,19 @@
+1. 	Chris Holder 	Australia 	26
+2. 	Tai Woffinden 	W.Brytania 	24
+3. 	Greg Hancock 	USA 	24
+4. 	Peter Kildemand 	Dania 	21
+5. 	Maciej Janowski 	Polska 	20
+6. 	Antonio Lindbaeck 	Szwecja 	20
+7. 	Fredrik Lindgren 	Szwecja 	19
+8. 	Jason Doyle 	Australia 	18
+9. 	Matej Zagar 	Słowenia 	18
+10. 	Bartosz Zmarzlik 	Polska 	18
+11. 	Nicki Pedersen 	Dania 	14
+12. 	Andreas Jonsson 	Szwecja 	14
+13. 	Niels Kristian Iversen 	Dania 	12
+14. 	Piotr Pawlicki 	Polska 	12
+15. 	Patryk Dudek 	Polska 	8
+16. 	Chris Harris 	W. Brytania 	6
+17. 	Denis Stojs 	Słowenia 	1
+18. 	Nick Skorja 	Słowenia 	1
+19. 	Matic Ivacic 	Słowenia 	0
