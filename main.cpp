@@ -1,4 +1,4 @@
-#include "Slav.h"
+#include "Speedway.h"
 #include "colors.h"
 #include <stdio.h>
 #include <time.h>
