@@ -41,7 +41,6 @@ Rider::Rider()
 	_reaction = randomValue();
 	_acceleration = randomValue();
 	_luck = randomValue();
-	exp = 0;
 }
 
 string Rider::description()
@@ -56,7 +55,7 @@ void Rider::arbiter()
 	
 	static int amountOfExclusions = (initArbiter(), exclusions.size());
 	string exclusion;
-	exclusion=exclusions[rand()];
+	exclusion=exclusions[rand()%amountOfExclusions];
 	printf("%s", exclusion.c_str());
 }
 
@@ -89,32 +88,38 @@ void colorin(int attr, int fg, double in)
 {
 	textcolor(attr, fg);
 		printf("\n%20f", in);	
-} 
+}
 
-void timeSurvey(std::vector < double > tab, Rider riders[])
+void timeSurvey(std::vector < double > &tab, Rider riders[])
 {	
 	double times[4];
-	for (int i = 0; i < 4; ++i)
+	double timesLap[16];
+	double difference[16];
+	int k=0;
+	for (int i = 0; i < 4; i++)
 	{
-	printf("\n%12d %s\n", i+1, "Lap:");	
-	for (int i = 0; i < 4; ++i)
+	textcolor(BRIGHT, WHITE);
+	printf("\n%s%9d %s\n",":::::::::::::::::::", i+1, "Lap:");	
+	for (int j = 0; j< 4; j++)
 	{
 	bool ifFinish=true;
 	int wayStart=0;
 	double wayLenght=0;
-	double difference=0;
 	clock_t begin, end;
 	time( &begin );
-	tab.push_back( 0 );
+	textcolor(BRIGHT, j+1);
+	printf("%s\n", riders[j].name().c_str());
 
 	while(ifFinish)
 	{
 		usleep(TIME_INTERVAL);
 		wayStart++;
 
-		wayLenght += ((riders[i].luck())/100+riders[i].acceleration())*wayStart*wayStart/2;
+		
+			wayLenght += ((riders[j].luck())/100+riders[j].acceleration()+randomValue()/100)*wayStart*wayStart/2;
 
-		colorin(BRIGHT, i+1, wayLenght);
+		//colorin(BRIGHT, j+1, wayLenght);
+		printf("%20s\n", "*");	
 		
 		if(wayLenght<4000)
 			ifFinish=true;
@@ -124,33 +129,60 @@ void timeSurvey(std::vector < double > tab, Rider riders[])
 	}
 	time( &end);
 	
-	difference = difftime( end, begin ) + riders[i].reaction();
-	times[i]=tab[i];
-	printf("\n\n%s %i %s %f\n\n", "Czas", i, "zawodnika:", difference);
-	
+	difference[k] = difftime( end, begin ) + riders[j].reaction()/1000;
+	//timesLap[j+4]=difference
+	//times[j]+=difference;
+	printf("\n\n%s %f\n\n", "Time: ", difference[k]);
+	k++;
 	}
+	}
+	for (int i = 0; i < 4; i++)
+	{
+	times[i]+=difference[i]+difference[i+4]+difference[i+8]+difference[i+12];
 	tab.push_back( times[i] );
 	}
+	textcolor(BRIGHT, WHITE);
+	printf("%s\n%19s\n", "::::::::::::::::::::::::::::::::::", "META!");
 }
 
-void isExcluded(Rider riders[])
+void classification(std::vector < double > &tab, Rider riders[])
 {
-	for (int i = 0; i < 4; ++i)
-	{
-		if(riders[i].luck()<40)
-			riders[i].arbiter();
-		else
-			printf("\n\n%d", 5);
-	}
-}
-
-void classification(std::vector < double > tab, Rider riders[])
-{
-	double whoWin=0;
-    	sort( tab.begin(), tab.end() );
-    	for( int i = 0; i < tab.size(); i++ )
+	std::vector < double > tabCopy;
+	tabCopy=tab;
+	int whoWin[4];
+    	sort( tabCopy.begin(), tabCopy.end() );
+    	for( int i = 0; i < 4; i++ )
     	{
-        		printf("\n%d %s\n", i,tab[i]);
+        		//printf("\n%d %f\n", i, tabCopy[i]);
+        		//printf("\n%d %f\n", i, tab[i]);
+        		if (tabCopy[0]==tab[i])
+        		{
+        			whoWin[0]=i;
+        		}
+        		if (tabCopy[1]==tab[i])
+        		{
+        			whoWin[1]=i;
+        		}
+        		if (tabCopy[2]==tab[i])
+        		{
+        			whoWin[2]=i;
+        		}
+        		if (tabCopy[3]==tab[i])
+        		{
+        			whoWin[3]=i;
+        		}
     	}
-    	whoWin=tab[0];
+    	for (int i = 0; i < 4; i++)
+    	{
+    		printf("\n\n%d %s %s %f\n", i+1, riders[whoWin[i]].name().c_str(), "Time:", tabCopy[i]);
+    	}
+
+    	printf("\n\n%s %s %s %f\n", "WINNER:", riders[whoWin[0]].name().c_str(), "Time:", tabCopy[0]);
 }
+
+/*if(riders[j].luck()<40)
+		{
+			printf("%s", "EXCLUSED!!: " );
+			riders[j].arbiter();
+			ifFinish=false;
+		}*/

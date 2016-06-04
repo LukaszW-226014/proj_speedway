@@ -22,7 +22,6 @@ int main(int argc, char const *argv[])
 
 	start();
 	timeSurvey(timeSurveys, riders);
-	//isExcluded(riders);
 	classification(timeSurveys, riders);
 
 	textcolor(RESET, WHITE);
