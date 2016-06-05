@@ -4,10 +4,11 @@
 #include <vector>
 
 #define HIT_FORCE 10
-#define TIME_INTERVAL 1000000/3
+#define TIME_INTERVAL 150000
 #define TIME_SEC 1000000
 #define WAY_LENGTH 10000
 #define N 4
+#define EX_RATIO 40
 
 using namespace std;
 

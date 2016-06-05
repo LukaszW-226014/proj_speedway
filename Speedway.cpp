@@ -83,15 +83,15 @@ void textcolor(int attr, int fg)
 
 void timeSurvey(std::vector < double > &tab, Rider riders[])
 {	
-	double times[4];
+	double times[N];
 	double timesLap[16];
 	double difference[16];
 	int k=0;
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < N; i++)
 	{
 	textcolor(BRIGHT, WHITE);
 	printf("\n%s%9d %s\n",":::::::::::::::::::", i+1, "Lap:");	
-	for (int j = 0; j< 4; j++)
+	for (int j = 0; j< N; j++)
 	{
 	bool ifFinish=true;
 	int wayStart=0;
@@ -106,7 +106,7 @@ void timeSurvey(std::vector < double > &tab, Rider riders[])
 		usleep(TIME_INTERVAL);
 		wayStart++;
 		
-		wayLenght += ((riders[j].luck())/100+riders[j].acceleration()*(i+1)/10+randomValue()/100)*wayStart*wayStart/2;
+		wayLenght += ((riders[j].stress())/100+riders[j].acceleration()*(i+1)/10+randomValue()/100)*wayStart*wayStart/2;
 
 		printf("%20s\n", "*");	
 		
@@ -118,12 +118,12 @@ void timeSurvey(std::vector < double > &tab, Rider riders[])
 	}
 	time( &end);
 	
-	difference[k] = difftime( end, begin ) + riders[j].reaction()/1000;
+	difference[k] = 10 + difftime( end, begin ) + riders[j].reaction()/1000/(i+1);
 	printf("%s %f\n\n", "Time: ", difference[k]);
 	k++;
 	}
 	}
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < N; i++)
 	{
 	times[i]+=difference[i]+difference[i+4]+difference[i+8]+difference[i+12];
 	tab.push_back( times[i] );
@@ -136,9 +136,9 @@ void classification(std::vector < double > &tab, Rider riders[])
 {
 	std::vector < double > tabCopy;
 	tabCopy=tab;
-	int whoWin[4];
+	int whoWin[N];
     	sort( tabCopy.begin(), tabCopy.end() );
-    	for( int i = 0; i < 4; i++ )
+    	for( int i = 0; i < N; i++ )
     	{
         		if (tabCopy[0]==tab[i])
         		{
@@ -157,21 +157,27 @@ void classification(std::vector < double > &tab, Rider riders[])
         			whoWin[3]=i;
         		}
     	}
-    	for (int i = 0; i < 4; i++)
+    	for (int i = 0; i < N; i++)
     	{
-    		if(riders[i].luck()>50)
+    		if(riders[whoWin[i]].luck()>EX_RATIO)
     		{
     			printf("\n\n %d %s %s %s %.3f\n", i+1, "|", riders[whoWin[i]].name().c_str(), "Time:", tabCopy[i]);
     		}
     		else
     		{
-    			printf("\n\n %d %s %s %s %s\n", i+1, "|", riders[whoWin[i]].name().c_str(), "EXCLUDED!!:", riders[i].arbiter().c_str());
-    		
+    			printf("\n\n %d %s %s %s %.3f\n", i+1, "|", riders[whoWin[i]].name().c_str(), "Time:", tabCopy[i]);
+    			textcolor(BRIGHT,RED);
+    			printf("\t%s %s", "EXCLUDED!!:", riders[whoWin[i]].arbiter().c_str());
+    			textcolor(BRIGHT,WHITE);
     		}
     	}
-    	textcolor(BRIGHT, RED);
+    	textcolor(BRIGHT, GREEN);
 
-    	if(riders[whoWin[0]].luck()<50)
+	if(riders[whoWin[0]].luck()<EX_RATIO && riders[whoWin[1]].luck()<EX_RATIO && riders[whoWin[2]].luck()<EX_RATIO)
+    	printf("\n\n%s %s %s %.3f\n", "WINNER:", riders[whoWin[3]].name().c_str(), "Time:", tabCopy[3]);
+   	else if(riders[whoWin[0]].luck()<EX_RATIO && riders[whoWin[1]].luck()<EX_RATIO)
+    	printf("\n\n%s %s %s %.3f\n", "WINNER:", riders[whoWin[2]].name().c_str(), "Time:", tabCopy[2]);
+    	else if(riders[whoWin[0]].luck()<EX_RATIO)
     	printf("\n\n%s %s %s %.3f\n", "WINNER:", riders[whoWin[1]].name().c_str(), "Time:", tabCopy[1]);
     	else
     	printf("\n\n%s %s %s %.3f\n", "WINNER:", riders[whoWin[0]].name().c_str(), "Time:", tabCopy[0]);

@@ -8,9 +8,7 @@
 int main(int argc, char const *argv[])
 {
 	std::vector < double > timeSurveys;
-	srand(argc == 2 
-		? atoi(argv[1]) 
-		: time(NULL));
+	srand(argc == 2 ? atoi(argv[1]) : time(NULL));
 	//srand(time(NULL));
 	
 	Rider riders[4];
