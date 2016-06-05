@@ -40,23 +40,21 @@ Rider::Rider()
 	_name = names[rand() % amountOfNames];
 	_reaction = randomValue();
 	_acceleration = randomValue();
+	_stress =  randomValue();
 	_luck = randomValue();
 }
 
 string Rider::description()
 {
 	return _name + "\n\tReaction:" + to_string(_reaction) + 
-		" Acceleration:" + to_string(_acceleration) + 
-		" Luck:" + to_string(_luck); 
+		" Acceleration:" + to_string(_acceleration) + " Stress:" + to_string(_stress)+ " Luck:" + to_string(_luck)+ "\n";
 }
 
-void Rider::arbiter()
+string Rider::arbiter()
 {
 	
 	static int amountOfExclusions = (initArbiter(), exclusions.size());
-	string exclusion;
-	exclusion=exclusions[rand()%amountOfExclusions];
-	printf("%s", exclusion.c_str());
+	return exclusions[rand()%amountOfExclusions].c_str();
 }
 
 double Rider::way(int value)
@@ -68,26 +66,19 @@ void start()
 {
 	for (int i = 3; i >0; i--)
 	{
-		usleep(TIME_INTERVAL);
+		textcolor(BRIGHT, CYAN);
+		usleep(TIME_SEC);
 		printf("\n%14d\n", i);
 	}
+	usleep(TIME_SEC);
 	printf("\n%18s\n", "START!!");
 }
 
 void textcolor(int attr, int fg) 
 {
-        char command[13];
-
-     
-        //sprintf(command, "%c[%d;%d;%dm", 0x1B, attr, fg + 30, bg + 40); //Tlo
-         sprintf(command, "%c[%d;%dm", 0x1B, attr, fg + 30);
-        printf("%s", command);
-}
-
-void colorin(int attr, int fg, double in)
-{
-	textcolor(attr, fg);
-		printf("\n%20f", in);	
+        	char command[13];
+        	sprintf(command, "%c[%d;%dm", 0x1B, attr, fg + 30);
+        	printf("%s", command);
 }
 
 void timeSurvey(std::vector < double > &tab, Rider riders[])
@@ -114,11 +105,9 @@ void timeSurvey(std::vector < double > &tab, Rider riders[])
 	{
 		usleep(TIME_INTERVAL);
 		wayStart++;
-
 		
-			wayLenght += ((riders[j].luck())/100+riders[j].acceleration()+randomValue()/100)*wayStart*wayStart/2;
+		wayLenght += ((riders[j].luck())/100+riders[j].acceleration()*(i+1)/10+randomValue()/100)*wayStart*wayStart/2;
 
-		//colorin(BRIGHT, j+1, wayLenght);
 		printf("%20s\n", "*");	
 		
 		if(wayLenght<4000)
@@ -130,9 +119,7 @@ void timeSurvey(std::vector < double > &tab, Rider riders[])
 	time( &end);
 	
 	difference[k] = difftime( end, begin ) + riders[j].reaction()/1000;
-	//timesLap[j+4]=difference
-	//times[j]+=difference;
-	printf("\n\n%s %f\n\n", "Time: ", difference[k]);
+	printf("%s %f\n\n", "Time: ", difference[k]);
 	k++;
 	}
 	}
@@ -142,7 +129,7 @@ void timeSurvey(std::vector < double > &tab, Rider riders[])
 	tab.push_back( times[i] );
 	}
 	textcolor(BRIGHT, WHITE);
-	printf("%s\n%19s\n", "::::::::::::::::::::::::::::::::::", "META!");
+	printf("%s\n%19s\n", "::::::::::::::::::::::::::::::::::", "FINISH!");
 }
 
 void classification(std::vector < double > &tab, Rider riders[])
@@ -153,8 +140,6 @@ void classification(std::vector < double > &tab, Rider riders[])
     	sort( tabCopy.begin(), tabCopy.end() );
     	for( int i = 0; i < 4; i++ )
     	{
-        		//printf("\n%d %f\n", i, tabCopy[i]);
-        		//printf("\n%d %f\n", i, tab[i]);
         		if (tabCopy[0]==tab[i])
         		{
         			whoWin[0]=i;
@@ -174,15 +159,20 @@ void classification(std::vector < double > &tab, Rider riders[])
     	}
     	for (int i = 0; i < 4; i++)
     	{
-    		printf("\n\n%d %s %s %f\n", i+1, riders[whoWin[i]].name().c_str(), "Time:", tabCopy[i]);
+    		if(riders[i].luck()>50)
+    		{
+    			printf("\n\n %d %s %s %s %.3f\n", i+1, "|", riders[whoWin[i]].name().c_str(), "Time:", tabCopy[i]);
+    		}
+    		else
+    		{
+    			printf("\n\n %d %s %s %s %s\n", i+1, "|", riders[whoWin[i]].name().c_str(), "EXCLUDED!!:", riders[i].arbiter().c_str());
+    		
+    		}
     	}
+    	textcolor(BRIGHT, RED);
 
-    	printf("\n\n%s %s %s %f\n", "WINNER:", riders[whoWin[0]].name().c_str(), "Time:", tabCopy[0]);
+    	if(riders[whoWin[0]].luck()<50)
+    	printf("\n\n%s %s %s %.3f\n", "WINNER:", riders[whoWin[1]].name().c_str(), "Time:", tabCopy[1]);
+    	else
+    	printf("\n\n%s %s %s %.3f\n", "WINNER:", riders[whoWin[0]].name().c_str(), "Time:", tabCopy[0]);
 }
-
-/*if(riders[j].luck()<40)
-		{
-			printf("%s", "EXCLUSED!!: " );
-			riders[j].arbiter();
-			ifFinish=false;
-		}*/
